@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "sDSz6b0Sp7CCajHfZryaQ7orEUOTOZSPid/zESrdNRga4cmW5oD7qVso2gLK1jwGJs99FiRitGh1e0SZL6lzvg==",
+  "success": true,
+  "projectFilePath": "C:\\AOLEG\\MAG2\\ServerProg\\SP_HTTPListener_lab1\\SP_HTTPListener_lab1.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\olkro\\.nuget\\packages\\mimetypes\\2.4.1\\mimetypes.2.4.1.nupkg.sha512"
+  ],
+  "logs": []
+}
