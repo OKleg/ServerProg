@@ -1,5 +1,10 @@
-﻿using System.Net;
+﻿using System.Data;
+using System.Formats.Asn1;
+using System.Globalization;
+using System.IO;
+using System.Net;
 using System.Text;
+
 
 using var listener = new HttpListener();
 listener.Prefixes.Add("http://localhost:8001/");
@@ -9,6 +14,7 @@ listener.Start();
 Console.WriteLine("Listening on port 8001...");
 string pathDir = Path.GetFullPath("..\\..\\..\\") ;
 Console.WriteLine(pathDir);
+string logFilePath = pathDir + "log.csv";
 
 while (listener.IsListening)
 {
@@ -23,7 +29,10 @@ while (listener.IsListening)
     byte[] buf;
     if (File.Exists(path))
     {
-        resp.Headers.Set("Content-Type", resp.ContentType);//
+        resp.Headers.Set("Content-Type", resp.ContentType);
+        resp.StatusCode = (int)HttpStatusCode.OK;
+        string msg = $"{resp.StatusCode}: {resp.StatusDescription}";
+        Console.WriteLine(msg);
         buf = File.ReadAllBytes(path);
     }
     else
@@ -75,12 +84,17 @@ listener.Stop();
 
 void log(HttpListenerRequest req, HttpListenerResponse resp)
 {
-
-
-    Console.WriteLine($"Дата обращения: {DateTime.UtcNow}," +
-        $" IP клиента: {req.RemoteEndPoint}," +
-        $" путь обращения: {req.Url}," +
-        $" код ответа: {resp.StatusCode}.");
+    string logLine = "";
+    using (FileStream fs = File.OpenWrite(logFilePath))
+        using (StreamWriter sw = new StreamWriter(fs))
+        {
+        logLine = $"{DateTime.UtcNow};" +
+            $"{req.RemoteEndPoint};" +
+            $"{req.Url};" +
+            $"{resp.StatusCode};";
+        sw.WriteLine(logLine);
+        }
+    Console.WriteLine(logLine);
 }
 
 /*
