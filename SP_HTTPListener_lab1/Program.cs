@@ -1,7 +1,6 @@
 ﻿using System.Data;
 using System.Formats.Asn1;
 using System.Globalization;
-using System.IO;
 using System.Net;
 using System.Text;
 
@@ -86,7 +85,7 @@ void log(HttpListenerRequest req, HttpListenerResponse resp)
 {
     string logLine = "";
     using (FileStream fs = File.OpenWrite(logFilePath))
-        using (StreamWriter sw = new StreamWriter(fs))
+        using (StreamWriter sw = new StreamWriter(fs,Encoding.UTF8))
         {
         logLine = $"{DateTime.UtcNow};" +
             $"{req.RemoteEndPoint};" +
