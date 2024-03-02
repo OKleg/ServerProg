@@ -78,12 +78,12 @@ namespace HTTPServerAsync
         {
             string logLine = "";
 
-            logLine = $"{DateTime.UtcNow};" +
+            logLine = $"{DateTime.Now};" +
                 $"{req.RemoteEndPoint};" +
                 $"{req.Url};" +
                 $"{resp.StatusCode};";
 
-            File.AppendAllText(logFilePath, logLine);
+            File.AppendAllText(logFilePath, logLine + Environment.NewLine);
             Console.WriteLine(logLine);
         }
 
