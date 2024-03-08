@@ -1,17 +1,40 @@
 ﻿
 @{
-    
-}
 
+}
+@functions{
+    public string isActive(string title)
+    {
+        if (ViewData["Title"]==title)
+        {
+            return "active";
+        }
+        else 
+        {
+            return "";
+        }
+    }
+}
+<div class="navbar-header">
+    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="index.html"><img src="images/logos/logo.png" alt="image"></a>
+</div>
 <div id="navbar" class="navbar-collapse collapse">
     <ul class="nav navbar-nav navbar-right">
-        <li><a asp-page="Index">Home</a></li>
-        <li><a asp-page="AboutUs">About us</a></li>
-        <li><a asp-page="Services">Our Services</a></li>
-        <li><a asp-page="Portfolio">Portfolio</a></li>
-        <li><a asp-page="Features">Features</a></li>
-        <li><a asp-page="Testimonials">Testimonials</a></li>
-        <li><a asp-page="Pricing">Pricing</a></li>
-        <li><a class="active" asp-page="Contact">Contact</a></li>
+        <li>
+            <a class=@isActive("Home") asp-page="Index">Home</a>
+        </li>
+        <li><a class=@isActive("About us") asp-page="AboutUs">About us</a></li>
+        <li><a class=@isActive("Our Services") asp-page="Services">Our Services</a></li>
+        <li><a class=@isActive("Our Portfolio") asp-page="Portfolio">Portfolio</a></li>
+        <li><a class=@isActive("Features") asp-page="Features">Features</a></li>
+        <li><a class=@isActive("Testimonials") asp-page="Testimonials">Testimonials</a></li>
+        <li><a class=@isActive("Pricing") asp-page="Pricing">Pricing</a></li>
+        <li><a class=@isActive("Contact") asp-page="Contact">Contact</a></li>
     </ul>
 </div>
