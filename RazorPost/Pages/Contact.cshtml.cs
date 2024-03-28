@@ -16,6 +16,7 @@ namespace RazorPages.Pages
     [Bind]
     public class Contact
     {
+        
         [BindProperty(Name="first_name",SupportsGet =true)]
         [Required]
         public string first_name { get; set; }
@@ -75,7 +76,6 @@ namespace RazorPages.Pages
             if (first_name == null || first_name.Trim(' ') == "")
             {
                 MessageWorning+= "<div class=\"error_message\">\"Attention! You must enter your name\"</div>";
-
             }
             else if (email == null || email.Trim(' ') == "")
             {
@@ -90,23 +90,31 @@ namespace RazorPages.Pages
             {
                 MessageWorning+= "<div class=\"error_message\">\"Attention! Please enter your message.\"</div>";
             }
-           
-            using var fs = new FileStream("file.csv", FileMode.Append);
-            using (var writer = new StreamWriter(fs))
-            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+            MessageSuccess =
+             "<fieldset>"
+            + "<div id='success_page'>"
+            + "<h1>Email Sent Successfully.</h1>"
+            + "<p>Thank you <strong>$first_name</strong>, your message has been submitted to us.</p>"
+            + "</div>"
+            + "</fieldset>";
+            if (MessageWorning == "")
             {
-                if (fs.Length == 0)
+                using var fs = new FileStream("file.csv", FileMode.Append);
+                using (var writer = new StreamWriter(fs))
+                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
                 {
-                    csv.WriteHeader<Contact>();
-                    csv.NextRecord();
-                }
-                //
+                    if (fs.Length == 0)
+                    {
+                        csv.WriteHeader<Contact>();
+                        csv.NextRecord();
+                    }
+                    //
                     csv.WriteRecord(ContactData);
                     csv.NextRecord();
-                //
+                    //
+                }
             }
-            
-            return Content(MessageWorning);
+            return Content(MessageSuccess);
         }
     }
 }
