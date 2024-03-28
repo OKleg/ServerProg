@@ -83,7 +83,7 @@ namespace RazorPages.Pages
             }
             else if (!isEmail(email))
             {
-                MessageWorning+= "<div class=\"error_message\">\"Attention! You have enter an invalid e-mail address, try again.\"</div>";
+                //MessageWorning+= "<div class=\"error_message\">\"Attention! You have enter an invalid e-mail address, try again.\"</div>";
             }
 
             if (comments == null || comments.Trim(' ') == " ")
@@ -94,7 +94,7 @@ namespace RazorPages.Pages
              "<fieldset>"
             + "<div id='success_page'>"
             + "<h1>Email Sent Successfully.</h1>"
-            + "<p>Thank you <strong>$first_name</strong>, your message has been submitted to us.</p>"
+            + $"<p>Thank you <strong>{first_name}</strong>, your message has been submitted to us.</p>"
             + "</div>"
             + "</fieldset>";
             if (MessageWorning == "")
@@ -113,8 +113,9 @@ namespace RazorPages.Pages
                     csv.NextRecord();
                     //
                 }
+                return Content(MessageSuccess);
             }
-            return Content(MessageSuccess);
+            return Content(MessageWorning);
         }
     }
 }
