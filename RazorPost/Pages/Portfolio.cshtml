@@ -31,7 +31,21 @@
         <hr class="invis">
 
         <div id="da-thumbs" class="da-thumbs portfolio">
-            <div class="post-media pitem item-w1 item-h1 cat1">
+        @{ 
+            foreach (var item in Model.cards)
+            {
+                    <div class="post-media pitem item-w1 item-h1 @item.Cat">
+                        <a href="@item.ImgSrc" data-rel="prettyPhoto[gal]">
+                            <img src="@item.ImgSrc" alt="" class="img-responsive">
+                            <div>
+                                <h3>@item.Title<small>@item.Subtitle</small></h3>
+                                <i class="flaticon-unlink"></i>
+                            </div>
+                        </a>
+                    </div>
+            }
+        }
+            @*<div class="post-media pitem item-w1 item-h1 cat1">
                 <a href="uploads/portfolio_01.jpg" data-rel="prettyPhoto[gal]">
                     <img src="uploads/portfolio_01.jpg" alt="" class="img-responsive">
                     <div>
@@ -39,8 +53,8 @@
                         <i class="flaticon-unlink"></i>
                     </div>
                 </a>
-            </div>
-            <div class="post-media pitem item-w1 item-h1 cat2">
+            </div>*@
+            @*<div class="post-media pitem item-w1 item-h1 cat2">
                 <a href="uploads/portfolio_02.jpg" data-rel="prettyPhoto[gal]">
                     <img src="uploads/portfolio_02.jpg" alt="" class="img-responsive">
                     <div>
@@ -121,7 +135,7 @@
                         <i class="flaticon-unlink"></i>
                     </div>
                 </a>
-            </div>
+            </div>*@
         </div><!-- end portfolio -->
     </div><!-- end container -->
 </div><!-- end section -->

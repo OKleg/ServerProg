@@ -1,0 +1,14 @@
+﻿@page
+@using RazorAppLab6.Models
+@model RazorPages.Pages.ServicesModel
+@{
+    ViewData["Title"] = "Our Services";
+}
+@Html.Partial("_Banner")
+
+@Html.Partial("_About")
+
+@Html.Partial("_Services")
+
+
+@Html.Partial("_Testimonials", Model.Testimonials)

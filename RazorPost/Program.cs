@@ -6,14 +6,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using RazorPages.Pages;
+//using .Services;
+namespace RazorPages;
 
-namespace RazorPages
-{
     public class Program
     {
         public static void Main(string[] args)
         {
+
             CreateHostBuilder(args).Build().Run();
+
+
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -23,4 +27,4 @@ namespace RazorPages
                     webBuilder.UseStartup<Startup>();
                 });
     }
-}
+

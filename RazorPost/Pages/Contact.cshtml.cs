@@ -11,8 +11,7 @@ using System.IO;
 using System.Globalization;
 using System.ComponentModel.DataAnnotations;
 
-namespace RazorPages.Pages
-{
+namespace RazorPages.Pages;
     [Bind]
     public class Contact
     {
@@ -118,4 +117,4 @@ namespace RazorPages.Pages
             return Content(MessageWorning);
         }
     }
-}
+

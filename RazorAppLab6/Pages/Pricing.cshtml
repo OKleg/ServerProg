@@ -1,0 +1,12 @@
+﻿@page
+@using RazorAppLab6.Models
+@model RazorPages.Pages.PricingModel
+@{
+    ViewData["Title"] = "Pricing";
+}
+@Html.Partial("_Banner")
+
+@Html.Partial("_About")
+
+
+@Html.Partial("_Testimonials", Model.Testimonials)

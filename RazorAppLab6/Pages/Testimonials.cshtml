@@ -1,0 +1,71 @@
+﻿@page
+@using RazorAppLab6.Models
+@model RazorPages.Pages.TestimonialsModel
+@{
+    ViewData["Title"] = "Testimonials";
+}
+@Html.Partial("_Banner")
+
+<div id="test-box" class="section wb">
+    <div class="container">
+        <div class="section-title text-center">
+            <h3>Testimonials</h3>
+            <p class="lead">We thanks for all our awesome testimonials! There are hundreds of our happy customers! <br>Let's see what others say about GoodWEB Solutions website template!</p>
+        </div><!-- end title -->
+
+
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="testimpnial_form">
+                    <div id="message"></div>
+                    <form id="testimonialform" class="row" name="testimonialform" method="post">
+                        <fieldset class="row-fluid">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <input asp-for="form.Name" type="text" name="Name" id="Name" class="form-control" placeholder="Name">
+                            </div>
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <input asp-for="form.Ocupation" type="text" name="Ocupation" id="Ocupation" class="form-control" placeholder="Ocupation">
+                            </div>
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <input asp-for="form.Title" type="text" name="Title" id="Title" class="form-control" placeholder="Title">
+                            </div>
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <input asp-for="form.Img_url" type="text" name="Img_url" id="Img_url" class="form-control" placeholder="uploads/testi_01.png" />
+                            </div>
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <textarea asp-for="form.Description" class="form-control" name="Description" id="Description" rows="3" placeholder="Description."></textarea>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 text-center">
+                                <button type="submit" value="SEND" id="submit" class="btn btn-light btn-radius btn-brd grd1 btn-block">Submit</button>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div><!-- end col -->
+        </div><!-- end row -->
+        @Html.Partial("_Testimonials", Model.Testimonials)
+        @* <div class="row">
+            <div class="col-md-12 col-sm-12">
+                <div class="testi-carousel owl-carousel owl-theme">
+                    @foreach (var testimonial in Model.Testimonials)
+                    {
+                        <div class="testimonial clearfix">
+                            <div class="desc">
+                                <h3><i class="fa fa-quote-left"></i> @testimonial.Title</h3>
+                                <p class="lead">@testimonial.Description</p>
+                            </div>
+                            <div class="testi-meta">
+                                <img src="@testimonial.Img_url" alt="" class="img-responsive alignleft">
+                                <h4>@testimonial.Name <small>@testimonial.Ocupation</small></h4>
+                            </div>
+                            <!-- end testi-meta -->
+                        </div>
+                        <!-- end testimonial -->
+                    }
+                    
+                </div><!-- end carousel -->
+            </div><!-- end col -->
+        </div><!-- end row --> *@
+
+    </div><!-- end container -->
+</div><!-- end section -->

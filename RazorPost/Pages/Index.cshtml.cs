@@ -6,8 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace RazorPages.Pages
-{
+namespace RazorPages.Pages;
     public class IndexModel : PageModel
     {
         private readonly ILogger<IndexModel> _logger;
@@ -22,4 +21,4 @@ namespace RazorPages.Pages
 
         }
     }
-}
+

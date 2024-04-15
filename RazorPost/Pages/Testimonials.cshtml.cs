@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace RazorPages.Pages
-{
+namespace RazorPages.Pages;
+
     public class TestimonialsModel : PageModel
     {
         public void OnGet()
         {
         }
     }
-}
+

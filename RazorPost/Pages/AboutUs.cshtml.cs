@@ -6,8 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace RazorPages.Pages
-{
+namespace RazorPages.Pages;
     public class AboutUsModel : PageModel
     {
         private readonly ILogger<AboutUsModel> _logger;
@@ -21,4 +20,4 @@ namespace RazorPages.Pages
         {
         }
     }
-}
+
