@@ -10,39 +10,40 @@ namespace REST_API.Controllers
     [ApiController]
     public class MoviesController : ControllerBase
     {
-        MoviesContext db =  new MoviesContext();
+        MoviesContext _context;
       
-        public MoviesController() {
+        public MoviesController(MoviesContext _db) {
+            //.Database.EnsureCreated();
             // гарантируем, что база данных создана
-            db.Database.EnsureCreated();
+            _context = _db;
             // загружаем данные из БД
-            db.Movies.Load();
+            _context.Movies.Load();
         }   
 
         // GET: api/<MoviesController>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Movie>>> GetMovies()
         {
-                return await db.Movies.ToListAsync();
+                return Ok(await _context.Movies.ToListAsync());
         }
 
         // GET api/<MoviesController>/id
         [HttpGet("{id}")]
         public async Task<ActionResult<Movie>> GetMovie(int id)
         {
-            var movie = await db.Movies.FindAsync(id);
+            var movie = await _context.Movies.FindAsync(id);
             if (movie == null)
                 return NotFound();
-            return movie;
+            return Ok(movie);
         }
 
         // POST api/<MoviesController>
         [HttpPost]
         public async Task<ActionResult<Movie>> PostMovie(Movie movie)
         {
-            db.Movies.Add(movie);
-            await db.SaveChangesAsync();
-            return CreatedAtAction("GetMovie", new { id = movie.MovieId }, movie);
+            _context.Movies.Add(movie);
+            await _context.SaveChangesAsync();
+            return Ok(CreatedAtAction("GetMovie", new { id = movie.MovieId }, movie));
         }
 
         // PUT api/<MoviesController>/5
@@ -51,9 +52,9 @@ namespace REST_API.Controllers
         {
             if (id != movie.MovieId)
                 return BadRequest();
-            db.Entry(movie).State = EntityState.Modified;
+            _context.Entry(movie).State = EntityState.Modified;
             try {
-                await db.SaveChangesAsync();
+                await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException) {
                 if (!MovieExists(id))
@@ -61,22 +62,22 @@ namespace REST_API.Controllers
                 else
                     throw;
             }
-            return NoContent();
+            return Ok(NoContent());
         }
 
         // DELETE api/<MoviesController>/id
         [HttpDelete("{id}")]
         public async Task<ActionResult<Movie>> DeleteMovie(int id)
         {
-            var movie = await db.Movies.FindAsync(id);
+            var movie = await _context.Movies.FindAsync(id);
             if (movie == null)   
                 return NotFound();  
-            db.Movies.Remove(movie); 
-            await db.SaveChangesAsync(); 
-            return movie;
+            _context.Movies.Remove(movie); 
+            await _context.SaveChangesAsync(); 
+            return Ok(movie);
         }
 
         private bool MovieExists(int id) =>
-            db.Movies.Any(e => e.MovieId == id);
+            _context.Movies.Any(e => e.MovieId == id);
     }
 }

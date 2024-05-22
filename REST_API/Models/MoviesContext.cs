@@ -7,13 +7,11 @@ namespace REST_API.Models;
 public partial class MoviesContext : DbContext
 {
     public MoviesContext()
-    {
-    }
+    {}
 
     public MoviesContext(DbContextOptions<MoviesContext> options)
         : base(options)
-    {
-    }
+    {}
 
     public virtual DbSet<Country> Countries { get; set; }
 
@@ -70,6 +68,7 @@ public partial class MoviesContext : DbContext
         modelBuilder.Entity<Department>(entity =>
         {
             entity.ToTable("department");
+            entity.HasKey(e => e.DepartmentId);
 
             entity.Property(e => e.DepartmentId)
                 .ValueGeneratedNever()
@@ -217,9 +216,12 @@ public partial class MoviesContext : DbContext
 
         modelBuilder.Entity<MovieCrew>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("movie_crew");
+            entity.HasKey(e => new {
+                e.MovieId,
+                e.PersonId,
+                e.DepartmentId 
+            });
+                
 
             entity.Property(e => e.DepartmentId)
                 .HasColumnType("INT")
@@ -231,7 +233,7 @@ public partial class MoviesContext : DbContext
             entity.Property(e => e.PersonId)
                 .HasColumnType("INT")
                 .HasColumnName("person_id");
-
+            
             entity.HasOne(d => d.Department).WithMany().HasForeignKey(d => d.DepartmentId);
 
             entity.HasOne(d => d.Movie).WithMany().HasForeignKey(d => d.MovieId);
