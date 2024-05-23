@@ -28,7 +28,7 @@ namespace REST_API.Controllers
           {
               return NotFound();
           }
-            return Ok(await _context.People.ToListAsync());
+            return Ok(await _context.People.AsNoTracking().ToListAsync());
         }
 
         // GET: api/People/5
@@ -58,9 +58,7 @@ namespace REST_API.Controllers
             {
                 return BadRequest();
             }
-
             _context.Entry(person).State = EntityState.Modified;
-
             try
             {
                 await _context.SaveChangesAsync();
@@ -68,15 +66,10 @@ namespace REST_API.Controllers
             catch (DbUpdateConcurrencyException)
             {
                 if (!PersonExists(id))
-                {
                     return NotFound();
-                }
                 else
-                {
                     throw;
-                }
             }
-
             return Ok(NoContent());
         }
 

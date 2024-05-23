@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using REST_API.Models;
+using System;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -10,26 +12,28 @@ namespace REST_API.Controllers
     [ApiController]
     public class MoviesController : ControllerBase
     {
-        MoviesContext _context;
+        private readonly MoviesContext _context;
       
         public MoviesController(MoviesContext _db) {
             //.Database.EnsureCreated();
             // гарантируем, что база данных создана
             _context = _db;
             // загружаем данные из БД
-            _context.Movies.Load();
-        }   
+           // _context.Movies.Load();
+        }
 
         // GET: api/<MoviesController>
+        /*[Authorize]*/
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Movie>>> GetMovies()
         {
-                return Ok(await _context.Movies.ToListAsync());
+                return Ok(await _context.Movies.AsNoTracking().ToListAsync());
         }
 
         // GET api/<MoviesController>/id
+        /*[Authorize]*/
         [HttpGet("{id}")]
-        public async Task<ActionResult<Movie>> GetMovie(int id)
+        public async Task<ActionResult<Movie>> GetMovie(long id)
         {
             var movie = await _context.Movies.FindAsync(id);
             if (movie == null)
@@ -38,22 +42,44 @@ namespace REST_API.Controllers
         }
 
         // POST api/<MoviesController>
+        /*[Authorize(Roles = "admin")]*/    
         [HttpPost]
         public async Task<ActionResult<Movie>> PostMovie(Movie movie)
         {
+            if (_context.People == null)
+            {
+                return Problem("Entity set 'MoviesContext.People'  is null.");
+            }
+            movie.MovieId = _context.Movies.ToListAsync().Result.MaxBy(m => m.MovieId).MovieId+1;
             _context.Movies.Add(movie);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                if (MovieExists(movie.MovieId))
+                {
+                    return Conflict();
+                }
+                else
+                {
+                    throw;
+                }
+            }
             return Ok(CreatedAtAction("GetMovie", new { id = movie.MovieId }, movie));
         }
 
         // PUT api/<MoviesController>/5
+        /*[Authorize(Roles = "admin")]*/
+        //459494
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMovie(int id, Movie movie)
+        public async Task<IActionResult> PutMovie(long id, Movie movie)
         {
-            if (id != movie.MovieId)
-                return BadRequest();
+            movie.MovieId = id;
             _context.Entry(movie).State = EntityState.Modified;
             try {
+                //_context.Movies.Update(movie);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException) {
@@ -62,12 +88,14 @@ namespace REST_API.Controllers
                 else
                     throw;
             }
+            
             return Ok(NoContent());
         }
 
         // DELETE api/<MoviesController>/id
+        /*[Authorize(Roles = "admin")]*/
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Movie>> DeleteMovie(int id)
+        public async Task<ActionResult<Movie>> DeleteMovie(long id)
         {
             var movie = await _context.Movies.FindAsync(id);
             if (movie == null)   
@@ -77,7 +105,7 @@ namespace REST_API.Controllers
             return Ok(movie);
         }
 
-        private bool MovieExists(int id) =>
+        private bool MovieExists(long id) =>
             _context.Movies.Any(e => e.MovieId == id);
     }
 }

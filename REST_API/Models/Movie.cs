@@ -17,7 +17,7 @@ public partial class Movie
 
     public double? Popularity { get; set; }
 
-    public byte[]? ReleaseDate { get; set; }
+    public string? ReleaseDate { get; set; }
 
     public long? Revenue { get; set; }
 

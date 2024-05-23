@@ -13,6 +13,7 @@ public partial class MoviesContext : DbContext
         : base(options)
     {}
 
+
     public virtual DbSet<Country> Countries { get; set; }
 
     public virtual DbSet<Department> Departments { get; set; }
@@ -140,6 +141,7 @@ public partial class MoviesContext : DbContext
         modelBuilder.Entity<Movie>(entity =>
         {
             entity.ToTable("movie");
+            entity.HasKey(e => e.MovieId);
 
             entity.Property(e => e.MovieId)
                 .ValueGeneratedNever()
@@ -303,7 +305,7 @@ public partial class MoviesContext : DbContext
         modelBuilder.Entity<Person>(entity =>
         {
             entity.ToTable("person");
-
+            entity.HasKey(e => e.PersonId);
             entity.Property(e => e.PersonId)
                 .ValueGeneratedNever()
                 .HasColumnType("INT")
