@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using REST_API.Models;
+using REST_API.Models.Contexts;
 using System;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -23,7 +24,7 @@ namespace REST_API.Controllers
         }
 
         // GET: api/<MoviesController>
-        /*[Authorize]*/
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Movie>>> GetMovies()
         {
@@ -31,7 +32,7 @@ namespace REST_API.Controllers
         }
 
         // GET api/<MoviesController>/id
-        /*[Authorize]*/
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<Movie>> GetMovie(long id)
         {
@@ -42,7 +43,7 @@ namespace REST_API.Controllers
         }
 
         // POST api/<MoviesController>
-        /*[Authorize(Roles = "admin")]*/    
+        [Authorize(Roles = "admin")]    
         [HttpPost]
         public async Task<ActionResult<Movie>> PostMovie(Movie movie)
         {
@@ -71,7 +72,7 @@ namespace REST_API.Controllers
         }
 
         // PUT api/<MoviesController>/5
-        /*[Authorize(Roles = "admin")]*/
+        [Authorize(Roles = "admin")]
         //459494
         [HttpPut("{id}")]
         public async Task<IActionResult> PutMovie(long id, Movie movie)
@@ -93,7 +94,7 @@ namespace REST_API.Controllers
         }
 
         // DELETE api/<MoviesController>/id
-        /*[Authorize(Roles = "admin")]*/
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<Movie>> DeleteMovie(long id)
         {

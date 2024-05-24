@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using REST_API.Models;
+using REST_API.Models.Contexts;
 
 namespace REST_API.Controllers
 {
@@ -21,6 +23,7 @@ namespace REST_API.Controllers
         }
 
         // GET: api/MovieCrews
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MovieCrew>>> GetMovieCrews()
         {
@@ -32,6 +35,7 @@ namespace REST_API.Controllers
         }
 
         // GET: api/MovieCrews/5
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<MovieCrew>> GetMovieCrew(long? id)
         {
@@ -51,6 +55,7 @@ namespace REST_API.Controllers
 
         // PUT: api/MovieCrews/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles ="admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutMovieCrew(long? id, MovieCrew movieCrew)
         {
@@ -82,6 +87,7 @@ namespace REST_API.Controllers
 
         // POST: api/MovieCrews
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<ActionResult<MovieCrew>> PostMovieCrew(MovieCrew movieCrew)
         {
@@ -110,6 +116,7 @@ namespace REST_API.Controllers
         }
 
         // DELETE: api/MovieCrews/5
+        [Authorize(Roles="admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMovieCrew(long? id)
         {

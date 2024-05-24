@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using REST_API.Models;
+using REST_API.Models.Contexts;
 
 namespace REST_API.Controllers
 {
@@ -21,6 +23,7 @@ namespace REST_API.Controllers
         }
 
         // GET: api/People
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Person>>> GetPeople()
         {
@@ -32,6 +35,7 @@ namespace REST_API.Controllers
         }
 
         // GET: api/People/5
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<Person>> GetPerson(long id)
         {
@@ -51,6 +55,7 @@ namespace REST_API.Controllers
 
         // PUT: api/People/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPerson(long id, Person person)
         {
@@ -75,6 +80,7 @@ namespace REST_API.Controllers
 
         // POST: api/People
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<ActionResult<Person>> PostPerson(Person person)
         {
@@ -103,6 +109,7 @@ namespace REST_API.Controllers
         }
 
         // DELETE: api/People/5
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePerson(long id)
         {

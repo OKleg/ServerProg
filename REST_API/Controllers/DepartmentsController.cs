@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using REST_API.Models;
+using REST_API.Models.Contexts;
 
 namespace REST_API.Controllers
 {
@@ -21,6 +23,7 @@ namespace REST_API.Controllers
         }
 
         // GET: api/Departments
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Department>>> GetDepartments()
         {
@@ -32,6 +35,7 @@ namespace REST_API.Controllers
         }
 
         // GET: api/Departments/5
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<Department>> GetDepartment(long id)
         {
@@ -51,6 +55,7 @@ namespace REST_API.Controllers
 
         // PUT: api/Departments/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDepartment(long id, Department department)
         {
@@ -82,6 +87,7 @@ namespace REST_API.Controllers
 
         // POST: api/Departments
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<ActionResult<Department>> PostDepartment(Department department)
         {
@@ -110,6 +116,7 @@ namespace REST_API.Controllers
         }
 
         // DELETE: api/Departments/5
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDepartment(long id)
         {

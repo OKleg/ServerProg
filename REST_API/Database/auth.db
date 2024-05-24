@@ -1,6 +1,0 @@
-﻿namespace REST_API.Database
-{
-    public class auth
-    {
-    }
-}

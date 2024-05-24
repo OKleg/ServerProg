@@ -2,52 +2,44 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using REST_API.Controllers.Utils;
 using REST_API.Models;
+using REST_API.Models.Contexts;
 using System.Diagnostics.Eventing.Reader;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace REST_API.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
     public class AccountController : Controller
     {
-        // тестовые данные вместо использования базы данных
-        private List<Auth> people = new List<Auth>
-        {
-            new Auth {Login="admin", Password="0000", Role = "admin" },
-            new Auth { Login="user", Password="1111", Role = "user" }
-        };
+ 
 
         AuthContext _context;
 
         public AccountController(AuthContext _db)
         {
-            //.Database.EnsureCreated();
-            // гарантируем, что база данных создана
             _context = _db;
-            // загружаем данные из БД
-            _context.Auth.Load();
         }
-
+        // GET: api/<AccountController>
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        {
+            return Ok(await _context.Users.AsNoTracking().ToListAsync());
+        }
         [HttpPost("/token")]
-        public IActionResult Token(string username, string password)
+        public async Task<IActionResult> Token(string username, string password)
         {
             var identity = GetIdentity(username, password);
             if (identity == null)
             {
                 return BadRequest(new { errorText = "Invalid username or password." });
             }
-
-            var now = DateTime.UtcNow;
             // создаем JWT-токен
-            var jwt = new JwtSecurityToken(
-                    issuer: AuthOptions.ISSUER,
-                    audience: AuthOptions.AUDIENCE,
-                    notBefore: now,
-                    claims: identity.Claims,
-                    expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
-                    signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
-            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+            var jwt = AuthOptions.GenerateJwt(identity.Claims.ToList());
+            var encodedJwt = AuthOptions.SerializeJwtToken(jwt);
 
             var response = new
             {
@@ -57,68 +49,16 @@ namespace REST_API.Controllers
 
             return Json(response);
         }
-        [HttpPost("/avtorization")]
-        public IActionResult Avtotize(string username, string password)
-        {
-            
-            if (username == "")
-                return  BadRequest(new { errorText = "Username culdn-t be empty" });
-            if (password.Length < 4)
-                return BadRequest(new { errorText = "Password could has 4 or more symbols" });
 
-            var now = DateTime.UtcNow;
-            var identity = CreateClamIdentity(username, password);
-            // создаем JWT-токен
-            var jwt = new JwtSecurityToken(
-                    issuer: AuthOptions.ISSUER,
-                    audience: AuthOptions.AUDIENCE,
-                    notBefore: now,
-                    claims: identity.Claims,
-                    expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
-                    signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
-            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-
-            var response = new
-            {
-                access_token = encodedJwt,
-                username = identity.Name
-            };
-
-            return Json(response);
-
-           /* if (_context.People == null)
-            {
-                return Problem("Entity set 'MoviesContext.People'  is null.");
-            }
-            movie.MovieId = _context.Movies.ToListAsync().Result.MaxBy(m => m.MovieId).MovieId+1;
-            _context.Movies.Add(movie);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (MovieExists(movie.MovieId))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-            return Ok(CreatedAtAction("GetMovie", new { id = movie.MovieId }, movie))*/
-
-        }
         private ClaimsIdentity GetIdentity(string username, string password)
         {
-            Auth person = _context.Auth.FirstOrDefault(x => x.Login == username && x.Password == password);
+            User person = _context.Users.First(x => x.Login == username && x.Password == password);
             if (person != null)
             {
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimsIdentity.DefaultNameClaimType, person.Login),
-                    new Claim(ClaimsIdentity.DefaultRoleClaimType, person.Role)
+                    new Claim(ClaimsIdentity.DefaultRoleClaimType, person.Role.ToString())
                 };
                 ClaimsIdentity claimsIdentity =
                 new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
@@ -128,22 +68,40 @@ namespace REST_API.Controllers
             // если пользователя не найдено
             return null;
         }
-        private ClaimsIdentity CreateClamIdentity(string username, string password)
+       
+        /// <summary>
+        /// 0 - admin
+        /// 1 - user
+        /// 3 - viewer
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <param name="role"></param>
+        /// <returns></returns>
+        [HttpPost("register")]
+        public async Task<IActionResult> SignUp(string username, string password, string role)
         {
-            var role = "";
-            if (username == "admin" && password == "0000")
-                role = "admin";
-            else
-                role = "user";
-            var claims = new List<Claim>
+            try
             {
-                new Claim(ClaimsIdentity.DefaultNameClaimType, username),
-                new Claim(ClaimsIdentity.DefaultRoleClaimType, role)
-            };
-            ClaimsIdentity claimsIdentity = 
-            new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
-                ClaimsIdentity.DefaultRoleClaimType);
-            return claimsIdentity;
+                _context.Users.Add(new User()
+                {
+                    Login = username,
+                    Password = password,
+                    Role = role
+
+                });
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                if (UserExists(username))
+                    return Conflict();
+                else
+                    throw;
+            }
+            return Ok();
         }
+        private bool UserExists(string login) =>
+            _context.Users.Any(e => e.Login == login);
     }
 }
