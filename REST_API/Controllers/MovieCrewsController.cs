@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -31,19 +32,21 @@ namespace REST_API.Controllers
           {
               return NotFound();
           }
-            return Ok(await _context.MovieCrews.ToListAsync());
+            return Ok(await _context.MovieCrews.AsNoTracking().ToListAsync());
         }
 
         // GET: api/MovieCrews/5
         [Authorize]
-        [HttpGet("{id}")]
-        public async Task<ActionResult<MovieCrew>> GetMovieCrew(long? id)
+        [HttpGet("{movies_id}/{person_id}/{departament_id}")]
+        public async Task<ActionResult<MovieCrew>> GetMovieCrew(long? movies_id, long? person_id, long? dId)
         {
           if (_context.MovieCrews == null)
           {
               return NotFound();
           }
-            var movieCrew = await _context.MovieCrews.FindAsync(id);
+
+            var movieCrew = await _context.MovieCrews.
+                FirstOrDefaultAsync(m => m.MovieId == movies_id && m.PersonId == person_id && m.DepartmentId == dId);
 
             if (movieCrew == null)
             {
@@ -56,10 +59,11 @@ namespace REST_API.Controllers
         // PUT: api/MovieCrews/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize(Roles ="admin")]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutMovieCrew(long? id, MovieCrew movieCrew)
+        [HttpPut("{movies_id}/{person_id}/{departament_id}")]
+        public async Task<IActionResult> PutMovieCrew(long? movies_id, long? person_id, long? departament_id, MovieCrew movieCrew)
         {
-            if (id != movieCrew.MovieId)
+
+            if (movieCrew.MovieId != movies_id && movieCrew.PersonId != person_id && movieCrew.DepartmentId != departament_id)
             {
                 return BadRequest();
             }
@@ -72,7 +76,7 @@ namespace REST_API.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!MovieCrewExists(id))
+                if (!MovieCrewExists(movies_id, person_id,departament_id))
                 {
                     return NotFound();
                 }
@@ -95,6 +99,9 @@ namespace REST_API.Controllers
           {
               return Problem("Entity set 'MoviesContext.MovieCrews'  is null.");
           }
+          movieCrew.Movie = _context.Movies.Where(m => m.MovieId == movieCrew.MovieId).FirstOrDefault();
+          movieCrew.Person = _context.People.Where(p => p.PersonId == movieCrew.PersonId).FirstOrDefault();
+            movieCrew.Department = _context.Departments.Where(p => p.DepartmentId == movieCrew.DepartmentId).FirstOrDefault();
             _context.MovieCrews.Add(movieCrew);
             try
             {
@@ -102,7 +109,7 @@ namespace REST_API.Controllers
             }
             catch (DbUpdateException)
             {
-                if (MovieCrewExists(movieCrew.MovieId))
+                if (MovieCrewExists(movieCrew.MovieId, movieCrew.PersonId, movieCrew.DepartmentId))
                 {
                     return Conflict();
                 }
@@ -112,19 +119,20 @@ namespace REST_API.Controllers
                 }
             }
 
-            return Ok(CreatedAtAction("GetMovieCrew", new { id = movieCrew.MovieId }, movieCrew));
+            return Ok(CreatedAtAction("GetMovieCrew", new { movieId = movieCrew.MovieId }, movieCrew));
         }
 
         // DELETE: api/MovieCrews/5
         [Authorize(Roles="admin")]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMovieCrew(long? id)
+        [HttpDelete("{movies_id}/{person_id}/{departament_id}")]
+        public async Task<IActionResult> DeleteMovieCrew(long? movies_id, long? person_id, long? departament_id)
         {
             if (_context.MovieCrews == null)
             {
                 return NotFound();
             }
-            var movieCrew = await _context.MovieCrews.FindAsync(id);
+            var movieCrew = await _context.MovieCrews.
+            FirstOrDefaultAsync(m => m.MovieId == movies_id && m.PersonId == person_id && m.DepartmentId == departament_id);
             if (movieCrew == null)
             {
                 return NotFound();
@@ -140,9 +148,9 @@ namespace REST_API.Controllers
             return Ok(NoContent());
         }
 
-        private bool MovieCrewExists(long? id)
+        private bool MovieCrewExists(long? mId, long? pId, long? dId)
         {
-            return (_context.MovieCrews?.Any(e => e.MovieId == id)).GetValueOrDefault();
+            return (_context.MovieCrews?.Any(m => m.MovieId == mId && m.PersonId == pId && m.DepartmentId == dId)).GetValueOrDefault();
         }
     }
 }

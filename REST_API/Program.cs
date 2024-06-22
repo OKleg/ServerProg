@@ -26,7 +26,7 @@ namespace REST_API
                 swagger.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
-                    Title = "My App",
+                    Title = "Lab 8 Rest API + Auth",
                     Description = "About Application"
                 });
                 // Set the comments path for the Swagger JSON and UI.
@@ -89,6 +89,10 @@ namespace REST_API
 
 
             app.MapControllers();
+
+            app.MapControllerRoute(
+             name: "default",
+            pattern: "swagger/v1/swagger.json");
 
             app.Run();
         }

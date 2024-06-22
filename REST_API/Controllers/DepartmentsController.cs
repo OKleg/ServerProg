@@ -129,7 +129,8 @@ namespace REST_API.Controllers
             {
                 return NotFound();
             }
-
+            var idMovieCrew = _context.MovieCrews.Where(x => x.MovieId == id);
+            _context.MovieCrews.RemoveRange(idMovieCrew);
             _context.Departments.Remove(department);
             await _context.SaveChangesAsync();
 

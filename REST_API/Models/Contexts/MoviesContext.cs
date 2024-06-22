@@ -218,13 +218,13 @@ public partial class MoviesContext : DbContext
 
         modelBuilder.Entity<MovieCrew>(entity =>
         {
+            entity.ToTable("movie_crew");
             entity.HasKey(e => new
             {
                 e.MovieId,
                 e.PersonId,
                 e.DepartmentId
             });
-
 
             entity.Property(e => e.DepartmentId)
                 .HasColumnType("INT")

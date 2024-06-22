@@ -101,7 +101,11 @@ namespace REST_API.Controllers
             var movie = await _context.Movies.FindAsync(id);
             if (movie == null)   
                 return NotFound();  
-            _context.Movies.Remove(movie); 
+            //for
+            var idMovieCrew = _context.MovieCrews.Where(x => x.MovieId == id);
+            _context.MovieCrews.RemoveRange(idMovieCrew);
+            _context.Movies.Remove(movie);
+
             await _context.SaveChangesAsync(); 
             return Ok(movie);
         }
